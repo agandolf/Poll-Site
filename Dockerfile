@@ -5,7 +5,8 @@ RUN apt-get update -y
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt
+RUN chmod g+r -R .
 
 EXPOSE 8000
 
-CMD ["py", "manage.py", "runserver"]
+CMD ["python3", "manage.py", "runserver"]
