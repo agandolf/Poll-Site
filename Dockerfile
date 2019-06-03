@@ -5,7 +5,8 @@ RUN apt-get update -y
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt
-RUN chmod g+rw -R ./polls
+RUN chmod g+r -R ./polls
+RUN chmod g+rw ./db.sqlite3
 
 EXPOSE 8000
 
