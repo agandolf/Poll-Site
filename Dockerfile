@@ -6,7 +6,8 @@ WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt
 RUN chmod g+r -R ./polls
-RUN chmod g+rwx ./db.sqlite3
+RUN chmod g+rw ./tmp
+RUN chmod g+rw ./db.sqlite3
 
 EXPOSE 8000
 

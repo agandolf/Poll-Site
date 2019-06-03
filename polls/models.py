@@ -15,6 +15,12 @@ class Question(models.Model):
 	was_published_recently.admin_order_field = 'pub_date'
 	was_published_recently.boolean = True
 	was_published_recently.short_description = 'Published recently?'
+	def verbose_question_text(self):
+		return "Question : %s" % (self.question_text)
+	def choices(self):
+		if not hasattr(self, '_choices'):
+			self._choices = self.choice_set.all()
+		return self._choices
 
 
 class Choice(models.Model):
