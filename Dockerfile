@@ -5,7 +5,7 @@ RUN apt-get update -y
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt
-RUN chmod g+r -R ./polls
+RUN chmod g+rw -R ./polls
 
 EXPOSE 8000
 
