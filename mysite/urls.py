@@ -16,10 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers, serializers, viewsets
-
+import watchman
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
-    path('api/polls/', include('polls.urls')), #added yesterday
+    path('api/polls/', include('polls.urls')),
+    path('api/status/', include('watchman.urls')),
 ]

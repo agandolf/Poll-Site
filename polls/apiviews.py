@@ -18,8 +18,26 @@ def questions_view(request):
         serializer = QuestionListPageSerializer(data=request.data)
         if serializer.is_valid():
             question = serializer.save()
-            return Response(QuestionListPageSerializer(question).data, status=status.HTTP_201_CREATED)
+            return Response(QuestionDetailPageSerializer(question).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+'''
+@api_view(['POST'])
+def multiple_choices_view(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    serializer = MultipleChoiceSerializer(data=request.data)
+    if serializer.is_valid():
+        choice = serializer.save(question=question)
+        return Response(MultipleChoiceSerializer(choice).data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+'''
+@api_view(['POST'])
+def multiple_questions_view(request):
+    serializer = QuestionListPageSerializer(many=True, data=request.data)
+    if serializer.is_valid():
+        questions = serializer.save()
+        return Response(QuestionDetailPageSerializer(questions, many=True).data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
@@ -58,7 +76,9 @@ def vote_view(request, question_id):
         choice.votes += 1
         choice.save()
         return Response("Voted")
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    raise serializer.ValidationError({
+                "voteError": "No choice exists at provided id"
+            })
 
 
 @api_view(['GET'])

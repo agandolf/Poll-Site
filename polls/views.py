@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 
+import datetime
 from .models import Choice, Question
 
 
@@ -39,6 +40,7 @@ def vote(request, question_id):
 		})
 	else:
 		selected_choice.votes += 1
+		selected_choice.timestamp = timezone.now()
 		selected_choice.save()
 		# Always return an HttpResponseRedirect after successfully dealing
 		# with POST data. This prevents data from being posted twice if a
