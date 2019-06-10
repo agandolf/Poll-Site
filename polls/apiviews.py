@@ -84,24 +84,19 @@ def question_result_view(request, question_id):
 @api_view(['GET'])
 def uptime_view(request):
     output = subprocess.check_output(['sh', '/app/time.sh'])
-    print(output.split())
     output = output.split()
     dates = output[0].decode().split('-')
     times = output[1].decode().split(':')
-    print(dates, times)
     year = int(dates[0])
     month = int(dates[1])
     day = int(dates[2])
     hour = int(times[0])
     mins = int(times[1])
     sec = int(times[2])
-    output.pop(0)
-    output.pop(0)
-    print(output)
-    for x in range(len(output)):
-        output[x] = output[x].decode()
-    output = " ".join(output)
-    print(output)
     d = datetime.datetime(year, month, day, hour, mins, sec)
+    day = int(output[3].decode()) * 24
+    hour = int(output[5].decode()) + day
+    mins = int(output[7].decode())
+    output = "PT"+str(hour)+":"+str(mins)
     return Response({"started": d.now(timezone.utc).astimezone().isoformat(),
         "runtime": output}, status=status.HTTP_200_OK)
