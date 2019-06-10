@@ -95,5 +95,13 @@ def uptime_view(request):
     hour = int(times[0])
     mins = int(times[1])
     sec = int(times[2])
+    output.pop(0)
+    output.pop(0)
+    print(output)
+    for x in range(len(output)):
+        output[x] = output[x].decode()
+    output = " ".join(output)
+    print(output)
     d = datetime.datetime(year, month, day, hour, mins, sec)
-    return Response(d.now(timezone.utc).astimezone().isoformat())
+    return Response({"started": d.now(timezone.utc).astimezone().isoformat(),
+        "runtime": output}, status=status.HTTP_200_OK)
