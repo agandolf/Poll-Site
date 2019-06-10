@@ -14,5 +14,5 @@ urlpatterns = [
     path('questions/<int:question_id>/vote/', apiviews.vote_view, name='vote_view'),
     path('questions/<int:question_id>/result/', apiviews.question_result_view, name='question_result_view'),
     path('multiple-questions/', apiviews.multiple_questions_view, name='multiple_questions_view'),
-#    path('multiple-choices/', apieviews.multiple_choices_view, name='multiple_choices_view'),
+    path('uptime/', apiviews.uptime_view, name='uptime_view'),
 ]

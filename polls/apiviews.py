@@ -1,3 +1,5 @@
+import subprocess, datetime
+from datetime import timezone
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -21,16 +23,6 @@ def questions_view(request):
             return Response(QuestionDetailPageSerializer(question).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-'''
-@api_view(['POST'])
-def multiple_choices_view(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    serializer = MultipleChoiceSerializer(data=request.data)
-    if serializer.is_valid():
-        choice = serializer.save(question=question)
-        return Response(MultipleChoiceSerializer(choice).data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
 @api_view(['POST'])
 def multiple_questions_view(request):
     serializer = QuestionListPageSerializer(many=True, data=request.data)
@@ -69,14 +61,16 @@ def choices_view(request, question_id):
 
 @api_view(['PATCH'])
 def vote_view(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    serializer = VoteSerializer(data=request.data)
-    if serializer.is_valid():
-        choice = get_object_or_404(Choice, pk=serializer.validated_data['choice_id'], question=question)
-        choice.votes += 1
-        choice.save()
-        return Response("Voted")
-    raise serializer.ValidationError({
+    try:
+        question = get_object_or_404(Question, pk=question_id)
+        serializer = VoteSerializer(data=request.data)
+        if serializer.is_valid():
+            choice = get_object_or_404(Choice, pk=serializer.validated_data['choice_id'], question=question)
+            choice.votes += 1
+            choice.save()
+            return Response("Voted")
+    except:
+        raise serializer.ValidationError({
                 "voteError": "No choice exists at provided id"
             })
 
@@ -86,3 +80,20 @@ def question_result_view(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     serializer = QuestionResultPageSerializer(question)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def uptime_view(request):
+    output = subprocess.check_output(['sh', '/app/time.sh'])
+    print(output.split())
+    output = output.split()
+    dates = output[0].decode().split('-')
+    times = output[1].decode().split(':')
+    print(dates, times)
+    year = int(dates[0])
+    month = int(dates[1])
+    day = int(dates[2])
+    hour = int(times[0])
+    mins = int(times[1])
+    sec = int(times[2])
+    d = datetime.datetime(year, month, day, hour, mins, sec)
+    return Response(d.now(timezone.utc).astimezone().isoformat())
